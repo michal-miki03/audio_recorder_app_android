@@ -17,9 +17,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, Recorder.class));
     }
 
-
     public final void recordingListStart(final View view){
-
         startActivity(new Intent(this, RecordingList.class));
     }
 }

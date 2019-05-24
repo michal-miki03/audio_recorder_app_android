@@ -1,8 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Recorder">
 
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="395dp"
+        android:layout_height="233dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/nameTextView"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Imię"
+                android:textAlignment="center"
+                tools:layout_editor_absoluteX="176dp"
+                tools:layout_editor_absoluteY="98dp" />
+
+            <EditText
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:maxLength="15"
+                android:hint="Wprowdź imię"
+                android:inputType="textPersonName" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/surnameTextView"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Nazwisko"
+                android:textAlignment="center"
+                tools:layout_editor_absoluteX="176dp"
+                tools:layout_editor_absoluteY="98dp" />
+
+            <EditText
+                android:id="@+id/surnameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:maxLength="15"
+                android:hint="Wprowdź nazwisko"
+                android:inputType="textPersonName" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Tytuł"
+                android:textAlignment="center"
+                tools:layout_editor_absoluteX="176dp"
+                tools:layout_editor_absoluteY="98dp" />
+
+            <EditText
+                android:id="@+id/titleEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Wprowdź tytuł"
+                android:maxLength="15"
+                android:inputType="textPersonName"
+                android:textAlignment="textStart" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/decriptionTextView"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Opis"
+                android:textAlignment="center"
+                tools:layout_editor_absoluteX="176dp"
+                tools:layout_editor_absoluteY="98dp" />
+
+            <EditText
+                android:id="@+id/descriptionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="top|left"
+                android:hint="Wprowdź opis"
+                android:maxLength="20"
+                android:inputType="textMultiLine"
+                android:lines="4"
+                android:minLines="2"
+                android:scrollbars="vertical" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:id="@+id/startRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="32dp"
+        android:onClick="startRecording"
+        android:text="Start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+    <Button
+        android:id="@+id/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="88dp"
+        android:onClick="stopRecording"
+        android:text="Stop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.932"
+        app:layout_constraintStart_toEndOf="@+id/startRecording"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="8dp"
+        android:text="Skasuj"
+        android:onClick="deleteRecording"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stop" />
+
+    <Button
+        android:id="@+id/list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:text="List"
+        android:onClick="recordingListStart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/delete" />
 </android.support.constraint.ConstraintLayout>
