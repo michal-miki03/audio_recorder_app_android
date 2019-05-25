@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +37,7 @@ public class Recorder extends AppCompatActivity {
     private EditText txtSurname;
     private EditText txtTitle;
     private EditText txtDescription;
+    private EditText[] txtTab = new EditText[4];
 
     private AudioRecord audioRecorder = null;
     private int bufferSize = 0;
@@ -54,6 +57,10 @@ public class Recorder extends AppCompatActivity {
         txtSurname = findViewById(R.id.surnameEditText);
         txtTitle = findViewById(R.id.titleEditText);
         txtDescription = findViewById(R.id.descriptionEditText);
+        txtTab[0] = txtName;
+        txtTab[1] = txtSurname;
+        txtTab[2] = txtTitle;
+        txtTab[3] = txtDescription;
 
         enableButtons(false);
 
@@ -62,8 +69,6 @@ public class Recorder extends AppCompatActivity {
                 AudioFormat.CHANNEL_CONFIGURATION_MONO,
                 AudioFormat.ENCODING_PCM_16BIT
         );
-
-
     }
 
     private void enableButtons(boolean isRecording){
@@ -81,10 +86,15 @@ public class Recorder extends AppCompatActivity {
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
 
+        String name = txtName.getText().toString();
+        String surname = txtSurname.getText().toString();
+        String title = txtTitle.getText().toString();
+        String description = txtDescription.getText().toString();
+
         if(!file.exists()){
             file.mkdirs();
         }
-        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + AUDIO_RECORDINGS_FILE_EXTENSION_WAV);
+        return (file.getAbsolutePath() + "/" + name +  "-" + surname + '-' + title + "-" + description + AUDIO_RECORDINGS_FILE_EXTENSION_WAV);
     }
 
     private String getTempFileName(){
@@ -101,22 +111,82 @@ public class Recorder extends AppCompatActivity {
     }
 
     public final void startRecording(final View view){
-        enableButtons(true);
-        audioRecorder = new AudioRecord(
-                MediaRecorder.AudioSource.MIC,
-                RECORDER_SAMPLES, RECORDER_CHANNELS,
-                RECORDER_AUDIO_ENCODING, bufferSize);
+        boolean isCorrect = false;
 
-        int ii = audioRecorder.getState();
-        if(ii==1) audioRecorder.startRecording();
-        isRecording = true;
-        recorderThread =  new Thread(new Runnable() {
-            @Override
-            public void run() {
-                saveData();
+        for(EditText edit : txtTab){
+            if(edit.getText().toString().trim().length() != 0) {
+                isCorrect = true;
             }
-        }, "AudioRecorderThread");
-        recorderThread.start();
+            else{
+                edit.setText("Brak");
+            }
+        }
+
+        String name = txtName.getText().toString().trim();
+        String surname = txtSurname.getText().toString().trim();
+        String title = txtTitle.getText().toString().trim();
+        String description = txtDescription.getText().toString().trim();
+
+        String fileName = name +  "-" + surname + '-' + title + "-" + description + AUDIO_RECORDINGS_FILE_EXTENSION_WAV;
+
+        String filepath = Environment.getExternalStorageDirectory().getPath();
+        File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
+        File[] files = file.listFiles();
+
+        for(int ii=0;ii<files.length;ii++) {
+            if (fileName.equals(files[ii].getName())) {
+                isCorrect = false;
+                Toast.makeText(this, "Nagranie o takich danych już istnieje. Wprowadź inne dane", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if(isCorrect) {
+            enableButtons(true);
+            audioRecorder = new AudioRecord(
+                    MediaRecorder.AudioSource.MIC,
+                    RECORDER_SAMPLES, RECORDER_CHANNELS,
+                    RECORDER_AUDIO_ENCODING, bufferSize);
+
+            int ii = audioRecorder.getState();
+            if (ii == 1) audioRecorder.startRecording();
+            isRecording = true;
+            recorderThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    saveData();
+                }
+            }, "AudioRecorderThread");
+            recorderThread.start();
+        }
+        else{
+            Toast.makeText(this, "Wpisz jakąś dane identyfikującą, by nagrywać", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public final void stopRecording(final View view){
+        enableButtons(false);
+        if(audioRecorder != null){
+            isRecording = false;
+            int ii = audioRecorder.getState();
+            if(ii == 1) audioRecorder.stop();
+            audioRecorder.release();
+            audioRecorder = null;
+            recorderThread = null;
+        }
+        copyFile(getTempFileName(),getFileName());
+        deleteTempFile();
+        enableButton(btnDeleteRecording, !isRecording);
+        Toast.makeText(this, "Stworzono nowe nagranie", Toast.LENGTH_SHORT).show();
+    }
+
+    public final void deleteRecording(final View view){
+        new File(getFileName()).delete();
+        enableButton(btnDeleteRecording, isRecording);
+        txtDescription.setText("");
+        txtTitle.setText("");
+        txtSurname.setText("");
+        txtName.setText("");
+        Toast.makeText(this, "Usunięto", Toast.LENGTH_SHORT).show();
     }
 
     private void saveData(){
@@ -149,21 +219,6 @@ public class Recorder extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
-
-    public final void stopRecording(final View view){
-        enableButtons(false);
-        if(audioRecorder != null){
-            isRecording = false;
-            int ii = audioRecorder.getState();
-            if(ii == 1) audioRecorder.stop();
-            audioRecorder.release();
-            audioRecorder = null;
-            recorderThread = null;
-        }
-
-        copyFile(getTempFileName(),getFileName());
-        deleteTempFile();
     }
 
     private void copyFile(String src, String dest){
@@ -247,15 +302,9 @@ public class Recorder extends AppCompatActivity {
         return header;
     }
 
-    public final void deleteRecording(final View view){
-        txtDescription.setText("");
-        txtTitle.setText("");
-        txtSurname.setText("");
-        txtName.setText("");
-    }
 
     public final void recordingListStart(final View view){
-
+        finish();
         startActivity(new Intent(this, RecordingList.class));
     }
 }
