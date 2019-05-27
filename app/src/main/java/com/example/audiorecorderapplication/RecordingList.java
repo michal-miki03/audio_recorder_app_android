@@ -302,4 +302,8 @@ public class RecordingList extends AppCompatActivity {
         Button play;
         CheckBox checkBox;
     }
+
+    public void onBackPressed() {
+        finish();
+    }
 }

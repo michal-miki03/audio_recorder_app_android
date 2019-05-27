@@ -11,7 +11,7 @@
     <style name="PaddingForButtons">
         <item name="android:padding">10dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/btnColor</item>
+        <item name="android:background">@drawable/button_rounded</item>
         <item name="android:textColor">#fff</item>
         <item name="android:fontFamily">sans-serif-black</item>
     </style>
