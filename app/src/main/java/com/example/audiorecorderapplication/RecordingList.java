@@ -1,7 +1,6 @@
 package com.example.audiorecorderapplication;
 
 import android.content.Context;
-import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -9,7 +8,6 @@ import android.media.MediaPlayer;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +18,13 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.FileOutputStream;;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 public class RecordingList extends AppCompatActivity {
 
@@ -41,7 +37,7 @@ public class RecordingList extends AppCompatActivity {
     private int bufferSize = 0;
     private MyListAdapter adapter;
     private List<Integer> voicesToCombine = new ArrayList<>();
-    ListView listView;
+    private ListView listView;
     Button combine;
     TextView title;
     MediaPlayer mp;
@@ -55,6 +51,11 @@ public class RecordingList extends AppCompatActivity {
         title = findViewById(R.id.title);
         combine = findViewById(R.id.combineRecords);
 
+        File file = setupTheRecordFolder();
+        makeList(file);
+    }
+
+    private File setupTheRecordFolder(){
         bufferSize = AudioRecord.getMinBufferSize(
                 8000,
                 AudioFormat.CHANNEL_CONFIGURATION_MONO,
@@ -67,7 +68,7 @@ public class RecordingList extends AppCompatActivity {
         if (!file.exists()) {
             file.mkdirs();
         }
-        makeList(file);
+        return file;
     }
 
     public void makeList(File file) {
@@ -84,88 +85,6 @@ public class RecordingList extends AppCompatActivity {
         } else title.setText("Nie dodałeś jeszcze żadnego nagrania :(");
         adapter = new MyListAdapter(this, R.layout.list_item, voicesList);
         listView.setAdapter(adapter);
-    }
-
-    private class MyListAdapter extends ArrayAdapter<String> {
-        private int layout;
-        private List<String> voices;
-        ViewHolder viewHolder;
-
-        private MyListAdapter(Context context, int recource, List<String> voices) {
-            super(context, recource, voices);
-            layout = recource;
-            this.voices = voices;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-
-            ViewHolder mainViewHolder = null;
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                convertView = inflater.inflate(layout, parent, false);
-                viewHolder = new ViewHolder();
-                viewHolder.text = convertView.findViewById(R.id.text);
-                viewHolder.play = convertView.findViewById(R.id.play);
-                viewHolder.delete = convertView.findViewById(R.id.delete);
-                viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
-                viewHolder.text.setText(voices.get(position));
-                convertView.setTag(viewHolder);
-                viewHolder.play.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String filepath = Environment.getExternalStorageDirectory().getPath();
-                        File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
-                        File[] files = file.listFiles();
-                        mp = new MediaPlayer();
-                        try {
-                            mp.setDataSource(files[position].getPath());
-                            mp.prepare();
-                            mp.start();
-                            recordInfo();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                viewHolder.delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String filepath = Environment.getExternalStorageDirectory().getPath();
-                        File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
-                        File[] files = file.listFiles();
-                        files[position].delete();
-                        deleteInfo();
-                    }
-                });
-
-                viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (((CompoundButton) view).isChecked()) {
-                            voicesToCombine.add(position);
-                        } else {
-                            if (voicesToCombine.contains(position)) {
-                                voicesToCombine.remove(position);
-                            }
-                        }
-                        checkInfo();
-                    }
-                });
-            } else {
-                mainViewHolder = (ViewHolder) convertView.getTag();
-                mainViewHolder.text.setText((getItem(position)));
-            }
-            return convertView;
-        }
-    }
-
-    public class ViewHolder {
-        TextView text;
-        Button delete;
-        Button play;
-        CheckBox checkBox;
     }
 
     private void deleteInfo() {
@@ -300,5 +219,87 @@ public class RecordingList extends AppCompatActivity {
         header[43] = (byte) ((totalAudioLen >> 24) & 0xff);
 
         return header;
+    }
+
+    private class MyListAdapter extends ArrayAdapter<String> {
+        private int layout;
+        private List<String> voices;
+        ViewHolder viewHolder;
+
+        private MyListAdapter(Context context, int recource, List<String> voices) {
+            super(context, recource, voices);
+            layout = recource;
+            this.voices = voices;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            ViewHolder mainViewHolder = null;
+            if (convertView == null) {
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                convertView = inflater.inflate(layout, parent, false);
+                viewHolder = new ViewHolder();
+                viewHolder.text = convertView.findViewById(R.id.text);
+                viewHolder.play = convertView.findViewById(R.id.play);
+                viewHolder.delete = convertView.findViewById(R.id.delete);
+                viewHolder.checkBox = convertView.findViewById(R.id.checkBox);
+                viewHolder.text.setText(voices.get(position));
+                convertView.setTag(viewHolder);
+                viewHolder.play.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String filepath = Environment.getExternalStorageDirectory().getPath();
+                        File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
+                        File[] files = file.listFiles();
+                        mp = new MediaPlayer();
+                        try {
+                            mp.setDataSource(files[position].getPath());
+                            mp.prepare();
+                            mp.start();
+                            recordInfo();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                viewHolder.delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String filepath = Environment.getExternalStorageDirectory().getPath();
+                        File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
+                        File[] files = file.listFiles();
+                        files[position].delete();
+                        deleteInfo();
+                    }
+                });
+
+                viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (((CompoundButton) view).isChecked()) {
+                            voicesToCombine.add(position);
+                        } else {
+                            if (voicesToCombine.contains(position)) {
+                                voicesToCombine.remove((Integer) position);
+                            }
+                        }
+                        checkInfo();
+                    }
+                });
+            } else {
+                mainViewHolder = (ViewHolder) convertView.getTag();
+                mainViewHolder.text.setText((getItem(position)));
+            }
+            return convertView;
+        }
+    }
+
+    public class ViewHolder {
+        TextView text;
+        Button delete;
+        Button play;
+        CheckBox checkBox;
     }
 }

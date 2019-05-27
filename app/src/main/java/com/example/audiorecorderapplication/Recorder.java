@@ -1,15 +1,12 @@
 package com.example.audiorecorderapplication;
 
-
 import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,11 +30,13 @@ public class Recorder extends AppCompatActivity {
     private Button btnStopRecord;
     private Button btnDeleteRecording;
     private Button btnRecordingListOpen;
+    private Button btnPause;
     private EditText txtName;
     private EditText txtSurname;
     private EditText txtTitle;
     private EditText txtDescription;
     private EditText[] txtTab = new EditText[4];
+    private byte THRESHOLD = 127;
 
     private AudioRecord audioRecorder = null;
     private int bufferSize = 0;
@@ -53,6 +52,7 @@ public class Recorder extends AppCompatActivity {
         btnStopRecord = findViewById(R.id.stop);
         btnDeleteRecording = findViewById(R.id.delete);
         btnRecordingListOpen = findViewById(R.id.list);
+        btnPause = findViewById(R.id.pause);
         txtName = findViewById(R.id.nameEditText);
         txtSurname = findViewById(R.id.surnameEditText);
         txtTitle = findViewById(R.id.titleEditText);
@@ -63,6 +63,7 @@ public class Recorder extends AppCompatActivity {
         txtTab[3] = txtDescription;
 
         enableButtons(false);
+        enableButton(btnDeleteRecording, isRecording);
 
         bufferSize = AudioRecord.getMinBufferSize(
                 8000,
@@ -71,18 +72,19 @@ public class Recorder extends AppCompatActivity {
         );
     }
 
-    private void enableButtons(boolean isRecording){
+    private void enableButtons(boolean isRecording) {
         enableButton(btnStartRecord, !isRecording);
+        enableButton(btnPause, isRecording);
         enableButton(btnStopRecord, isRecording);
         enableButton(btnDeleteRecording, !isRecording);
         enableButton(btnRecordingListOpen, !isRecording);
     }
 
-    private void enableButton(Button btn, boolean isEnable){
+    private void enableButton(Button btn, boolean isEnable) {
         btn.setEnabled(isEnable);
     }
 
-    private String getFileName(){
+    private String getFileName() {
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
 
@@ -91,56 +93,51 @@ public class Recorder extends AppCompatActivity {
         String title = txtTitle.getText().toString();
         String description = txtDescription.getText().toString();
 
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
-        return (file.getAbsolutePath() + "/" + name +  "-" + surname + '-' + title + "-" + description + AUDIO_RECORDINGS_FILE_EXTENSION_WAV);
+        return (file.getAbsolutePath() + "/" + name + "-" + surname + '-' + title + "-" + description + AUDIO_RECORDINGS_FILE_EXTENSION_WAV);
     }
 
-    private String getTempFileName(){
+    private String getTempFileName() {
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
 
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdirs();
         }
 
         File tempFile = new File(filepath, AUDIO_RECORDINGS_TEMP_FILE);
-        if(tempFile.exists()) tempFile.delete();
+        if (tempFile.exists()) tempFile.delete();
         return (file.getAbsolutePath() + "/" + AUDIO_RECORDINGS_TEMP_FILE);
     }
 
-    public final void startRecording(final View view){
-        boolean isCorrect = false;
+    public final void startRecording(final View view) {
+        boolean isCorrect = true;
 
-        for(EditText edit : txtTab){
-            if(edit.getText().toString().trim().length() != 0) {
-                isCorrect = true;
-            }
-            else{
+        for (EditText edit : txtTab) {
+            if (edit.getText().toString().trim().length() == 0) {
                 edit.setText("Brak");
             }
         }
 
-        String name = txtName.getText().toString().trim();
-        String surname = txtSurname.getText().toString().trim();
-        String title = txtTitle.getText().toString().trim();
-        String description = txtDescription.getText().toString().trim();
-
-        String fileName = name +  "-" + surname + '-' + title + "-" + description + AUDIO_RECORDINGS_FILE_EXTENSION_WAV;
-
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
-        File[] files = file.listFiles();
-
-        for(int ii=0;ii<files.length;ii++) {
-            if (fileName.equals(files[ii].getName())) {
-                isCorrect = false;
-                Toast.makeText(this, "Nagranie o takich danych już istnieje. Wprowadź inne dane", Toast.LENGTH_SHORT).show();
+        if (file.exists()) {
+            String name = txtName.getText().toString().trim();
+            String surname = txtSurname.getText().toString().trim();
+            String title = txtTitle.getText().toString().trim();
+            String description = txtDescription.getText().toString().trim();
+            String fileName = name + "-" + surname + '-' + title + "-" + description + AUDIO_RECORDINGS_FILE_EXTENSION_WAV;
+            File[] files = file.listFiles();
+            for (int ii = 0; ii < files.length; ii++) {
+                if (fileName.equals(files[ii].getName())) {
+                    isCorrect = false;
+                    Toast.makeText(this, "Nagranie o takich danych już istnieje. Wprowadź inne dane", Toast.LENGTH_SHORT).show();
+                }
             }
         }
-
-        if(isCorrect) {
+        if (isCorrect) {
             enableButtons(true);
             audioRecorder = new AudioRecord(
                     MediaRecorder.AudioSource.MIC,
@@ -157,29 +154,56 @@ public class Recorder extends AppCompatActivity {
                 }
             }, "AudioRecorderThread");
             recorderThread.start();
-        }
-        else{
+        } else {
             Toast.makeText(this, "Wpisz jakąś dane identyfikującą, by nagrywać", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public final void stopRecording(final View view){
+    public final void pauseRecording(final View view) {
+        String command = btnPause.getText().toString();
+        if (command.equals("Pauza")) {
+            btnPause.setText("Wznów");
+            if (audioRecorder != null) {
+                int ii = audioRecorder.getState();
+                audioRecorder.stop();
+                isRecording = false;
+            }
+            Toast.makeText(this, "Zatrzymano", Toast.LENGTH_SHORT).show();
+        } else {
+            btnPause.setText("Pauza");
+            if (audioRecorder != null) {
+                int ii = audioRecorder.getState();
+                audioRecorder.startRecording();
+                recorderThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        saveData();
+                    }
+                }, "AudioRecorderThread");
+                recorderThread.start();
+                isRecording = true;
+            }
+            Toast.makeText(this, "Wznowiono", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public final void stopRecording(final View view) {
         enableButtons(false);
-        if(audioRecorder != null){
+        if (audioRecorder != null) {
             isRecording = false;
             int ii = audioRecorder.getState();
-            if(ii == 1) audioRecorder.stop();
+            if (ii == 1) audioRecorder.stop();
             audioRecorder.release();
             audioRecorder = null;
             recorderThread = null;
         }
-        copyFile(getTempFileName(),getFileName());
+        copyFile(getTempFileName(), getFileName());
         deleteTempFile();
         enableButton(btnDeleteRecording, !isRecording);
         Toast.makeText(this, "Stworzono nowe nagranie", Toast.LENGTH_SHORT).show();
     }
 
-    public final void deleteRecording(final View view){
+    public final void deleteRecording(final View view) {
         new File(getFileName()).delete();
         enableButton(btnDeleteRecording, isRecording);
         txtDescription.setText("");
@@ -189,39 +213,52 @@ public class Recorder extends AppCompatActivity {
         Toast.makeText(this, "Usunięto", Toast.LENGTH_SHORT).show();
     }
 
-    private void saveData(){
+    private void saveData() {
         byte data[] = new byte[bufferSize];
         String fileName = getTempFileName();
         FileOutputStream os = null;
-
-        try{
-            os = new FileOutputStream(fileName);
-        } catch(Exception e){
+        try {
+            os = new FileOutputStream(fileName, true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         int read;
-        if(os != null){
-            while(isRecording){
+        if (os != null) {
+            while (isRecording) {
                 read = audioRecorder.read(data, 0, bufferSize);
-                if(AudioRecord.ERROR_INVALID_OPERATION != read){
+                if (AudioRecord.ERROR_INVALID_OPERATION != read) {
+                    int foundPeak = searchThreshold(data, THRESHOLD);
+                    if (foundPeak > -1) {
+                        try {
+                            os.write(data);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
 
-                    try{
-                        os.write(data);
-                    }catch(Exception e){
-                        e.printStackTrace();
                     }
                 }
             }
 
-            try{
+            try {
                 os.close();
-            } catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void copyFile(String src, String dest){
+    int searchThreshold(byte[] data, short thr) {
+        int peakIndex;
+        for (peakIndex = 0; peakIndex < data.length; peakIndex++) {
+            if (Math.abs(data[peakIndex]) >= thr) { //if ((data[peakIndex]>=thr) || (data[peakIndex]<=-thr)){
+                return peakIndex;
+            }
+        }
+        return -1; //not found
+    }
+
+    private void copyFile(String src, String dest) {
         FileInputStream in;
         FileOutputStream out;
         long totalAudioLen;
@@ -230,24 +267,24 @@ public class Recorder extends AppCompatActivity {
         byte[] data = new byte[bufferSize];
         byte[] header;
 
-        try{
+        try {
             in = new FileInputStream(src);
             out = new FileOutputStream(dest);
             totalAudioLen = in.getChannel().size();
             totalDataLen = totalAudioLen + 36;
             header = prepareWaveFileHeader(totalAudioLen, totalDataLen, RECORDER_SAMPLES, 2, byteRate);
             out.write(header, 0, 44);
-            while(in.read(data) != -1){
+            while (in.read(data) != -1) {
                 out.write(data);
             }
             in.close();
             out.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void deleteTempFile(){
+    private void deleteTempFile() {
         new File(getTempFileName()).delete();
     }
 
@@ -286,7 +323,7 @@ public class Recorder extends AppCompatActivity {
         header[29] = (byte) ((byteRate >> 8) & 0xff);
         header[30] = (byte) ((byteRate >> 16) & 0xff);
         header[31] = (byte) ((byteRate >> 24) & 0xff);
-        header[32] = (byte) (2*16/8);
+        header[32] = (byte) (2 * 16 / 8);
         header[33] = 0;
         header[34] = BITS_PER_SAMPLE;
         header[35] = 0;
@@ -303,7 +340,7 @@ public class Recorder extends AppCompatActivity {
     }
 
 
-    public final void recordingListStart(final View view){
+    public final void recordingListStart(final View view) {
         finish();
         startActivity(new Intent(this, RecordingList.class));
     }

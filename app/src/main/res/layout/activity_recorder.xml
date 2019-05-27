@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Recorder">
+    tools:context=".Recorder"
+    android:background="@drawable/background">
 
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="395dp"
         android:layout_height="233dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="48dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -28,6 +29,9 @@
                 android:layout_height="wrap_content"
                 android:text="Imię"
                 android:textAlignment="center"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 tools:layout_editor_absoluteX="176dp"
                 tools:layout_editor_absoluteY="98dp" />
 
@@ -35,11 +39,14 @@
                 android:id="@+id/nameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:maxLength="15"
                 android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźłŁĘÓŚĄŻŹŃĆć"
+                android:ems="10"
                 android:hint="Wprowdź imię"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:maxLength="15"
+                android:textColor="#fff"
+                android:textColorHint="#fff"
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow
@@ -52,6 +59,9 @@
                 android:layout_height="wrap_content"
                 android:text="Nazwisko"
                 android:textAlignment="center"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 tools:layout_editor_absoluteX="176dp"
                 tools:layout_editor_absoluteY="98dp" />
 
@@ -59,11 +69,14 @@
                 android:id="@+id/surnameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:maxLength="15"
-                android:hint="Wprowdź nazwisko"
                 android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźĘŁłÓŚĄŻŹŃĆć"
-                android:inputType="textPersonName" />
+                android:ems="10"
+                android:hint="Wprowdź nazwisko"
+                android:inputType="textPersonName"
+                android:maxLength="15"
+                android:textColor="#fff"
+                android:textColorHint="#fff"
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow
@@ -76,6 +89,9 @@
                 android:layout_height="wrap_content"
                 android:text="Tytuł"
                 android:textAlignment="center"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 tools:layout_editor_absoluteX="176dp"
                 tools:layout_editor_absoluteY="98dp" />
 
@@ -83,12 +99,15 @@
                 android:id="@+id/titleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźŁłĘÓŚĄŻŹŃĆć"
                 android:ems="10"
                 android:hint="Wprowdź tytuł"
-                android:maxLength="15"
                 android:inputType="textPersonName"
-                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźŁłĘÓŚĄŻŹŃĆć"
-                android:textAlignment="textStart" />
+                android:maxLength="15"
+                android:textAlignment="textStart"
+                android:textColor="#fff"
+                android:textColorHint="#fff"
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow
@@ -101,6 +120,9 @@
                 android:layout_height="wrap_content"
                 android:text="Opis"
                 android:textAlignment="center"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 tools:layout_editor_absoluteX="176dp"
                 tools:layout_editor_absoluteY="98dp" />
 
@@ -108,15 +130,18 @@
                 android:id="@+id/descriptionEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźĘłŁÓŚĄŻŹŃĆć"
                 android:ems="10"
                 android:gravity="top|left"
                 android:hint="Wprowdź opis"
-                android:maxLength="20"
                 android:inputType="textMultiLine"
-                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźĘłŁÓŚĄŻŹŃĆć"
                 android:lines="4"
+                android:maxLength="20"
                 android:minLines="2"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                android:textColor="#fff"
+                android:textColorHint="#fff"
+                android:textSize="14sp" />
 
         </TableRow>
 
@@ -126,8 +151,9 @@
         android:id="@+id/startRecording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="8dp"
+        android:background="#039428"
         android:onClick="startRecording"
         android:text="Start"
         app:layout_constraintStart_toStartOf="parent"
@@ -137,13 +163,12 @@
         android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="88dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="72dp"
+        android:background="#FF0000"
         android:onClick="stopRecording"
         android:text="Stop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.932"
-        app:layout_constraintStart_toEndOf="@+id/startRecording"
         app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
 
     <Button
@@ -151,15 +176,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Skasuj"
+        android:background="@color/btnColor"
         android:enabled="false"
         android:onClick="deleteRecording"
+        android:text="Skasuj"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stop" />
+        app:layout_constraintTop_toBottomOf="@+id/pause" />
 
     <Button
         android:id="@+id/list"
@@ -169,9 +195,26 @@
         android:layout_marginTop="28dp"
         android:layout_marginEnd="8dp"
         android:text="List"
+        android:background="@color/btnColor"
         android:onClick="recordingListStart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/delete" />
+
+    <Button
+        android:id="@+id/pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/btnColor"
+        android:enabled="false"
+        android:onClick="pauseRecording"
+        android:text="Pauza"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startRecording" />
 </android.support.constraint.ConstraintLayout>
