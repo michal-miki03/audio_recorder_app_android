@@ -27,7 +27,7 @@
                 android:id="@+id/nameTextView"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Imię"
+                android:text="@string/name"
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp"
@@ -39,14 +39,16 @@
                 android:id="@+id/nameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźłŁĘÓŚĄŻŹŃĆć"
+                android:digits="@string/digits"
                 android:ems="10"
-                android:hint="Wprowdź imię"
+                android:hint="@string/enter_name"
                 android:inputType="textPersonName"
                 android:maxLength="15"
                 android:textColor="#fff"
                 android:textColorHint="#fff"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:autofillHints="no"
+                tools:targetApi="o" />
         </TableRow>
 
         <TableRow
@@ -57,7 +59,7 @@
                 android:id="@+id/surnameTextView"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Nazwisko"
+                android:text="@string/surname"
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp"
@@ -69,14 +71,16 @@
                 android:id="@+id/surnameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźĘŁłÓŚĄŻŹŃĆć"
+                android:digits="@string/digits"
                 android:ems="10"
-                android:hint="Wprowdź nazwisko"
+                android:hint="@string/enter_surname"
                 android:inputType="textPersonName"
                 android:maxLength="15"
                 android:textColor="#fff"
                 android:textColorHint="#fff"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:autofillHints="no"
+                tools:targetApi="o"/>
         </TableRow>
 
         <TableRow
@@ -87,7 +91,7 @@
                 android:id="@+id/titleTextView"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Tytuł"
+                android:text="@string/title"
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp"
@@ -99,15 +103,17 @@
                 android:id="@+id/titleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźŁłĘÓŚĄŻŹŃĆć"
+                android:digits="@string/digits"
                 android:ems="10"
-                android:hint="Wprowdź tytuł"
+                android:hint="@string/enter_desc"
                 android:inputType="textPersonName"
                 android:maxLength="15"
                 android:textAlignment="textStart"
                 android:textColor="#fff"
                 android:textColorHint="#fff"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:autofillHints="no"
+                tools:targetApi="o"/>
         </TableRow>
 
         <TableRow
@@ -118,7 +124,7 @@
                 android:id="@+id/decriptionTextView"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Opis"
+                android:text="@string/description"
                 android:textAlignment="center"
                 android:textColor="#fff"
                 android:textSize="18sp"
@@ -130,10 +136,10 @@
                 android:id="@+id/descriptionEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:digits="qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźĘłŁÓŚĄŻŹŃĆć"
+                android:digits="@string/digits"
                 android:ems="10"
-                android:gravity="top|left"
-                android:hint="Wprowdź opis"
+                android:gravity="top|start"
+                android:hint="@string/enter_desc"
                 android:inputType="textMultiLine"
                 android:lines="4"
                 android:maxLength="20"
@@ -141,7 +147,9 @@
                 android:scrollbars="vertical"
                 android:textColor="#fff"
                 android:textColorHint="#fff"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:autofillHints="no"
+                tools:targetApi="o" />
 
         </TableRow>
 
@@ -154,7 +162,7 @@
         android:layout_marginStart="72dp"
         android:background="#039428"
         android:onClick="startRecording"
-        android:text="Start"
+        android:text="@string/start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
 
@@ -165,7 +173,7 @@
         android:layout_marginEnd="72dp"
         android:background="#FF0000"
         android:onClick="stopRecording"
-        android:text="Stop"
+        android:text="@string/stop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
 
@@ -179,7 +187,7 @@
         android:background="#FFEA00"
         android:enabled="false"
         android:onClick="deleteRecording"
-        android:text="Skasuj"
+        android:text="@string/delete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
@@ -192,7 +200,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="8dp"
-        android:text="List"
+        android:text="@string/go_to_list"
         android:background="@drawable/button_rounded"
         android:onClick="recordingListStart"
         app:layout_constraintEnd_toEndOf="parent"
@@ -210,7 +218,7 @@
         android:background="#FF9100"
         android:enabled="false"
         android:onClick="pauseRecording"
-        android:text="Pauza"
+        android:text="@string/pause"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
