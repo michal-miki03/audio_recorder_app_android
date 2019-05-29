@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+
 public class Recorder extends AppCompatActivity {
 
     private static final int BITS_PER_SAMPLE = 16;
@@ -36,8 +37,6 @@ public class Recorder extends AppCompatActivity {
     private EditText txtTitle;
     private EditText txtDescription;
     private EditText[] txtTab = new EditText[4];
-    private byte THRESHOLD = 127;
-
     private AudioRecord audioRecorder = null;
     private int bufferSize = 0;
     private Thread recorderThread = null;
@@ -117,21 +116,21 @@ public class Recorder extends AppCompatActivity {
 
         for (EditText edit : txtTab) {
             if (edit.getText().toString().trim().length() == 0) {
-                edit.setText("Brak");
+                edit.setText(R.string.empty);
             }
         }
 
         String filepath = Environment.getExternalStorageDirectory().getPath();
         File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
         if (file.exists()) {
-            String name = txtName.getText().toString().trim();
-            String surname = txtSurname.getText().toString().trim();
-            String title = txtTitle.getText().toString().trim();
-            String description = txtDescription.getText().toString().trim();
+            String name = txtName.getText().toString();
+            String surname = txtSurname.getText().toString();
+            String title = txtTitle.getText().toString();
+            String description = txtDescription.getText().toString();
             String fileName = name + "-" + surname + '-' + title + "-" + description + AUDIO_RECORDINGS_FILE_EXTENSION_WAV;
             File[] files = file.listFiles();
-            for (int ii = 0; ii < files.length; ii++) {
-                if (fileName.equals(files[ii].getName())) {
+            for (File f : files) {
+                if (fileName.equals(f.getName())) {
                     isCorrect = false;
                     Toast.makeText(this, "Nagranie o takich danych już istnieje. Wprowadź inne dane", Toast.LENGTH_SHORT).show();
                 }
@@ -162,17 +161,15 @@ public class Recorder extends AppCompatActivity {
     public final void pauseRecording(final View view) {
         String command = btnPause.getText().toString();
         if (command.equals("Pauza")) {
-            btnPause.setText("Wznów");
+            btnPause.setText(R.string.repeat);
             if (audioRecorder != null) {
-                int ii = audioRecorder.getState();
                 audioRecorder.stop();
                 isRecording = false;
             }
             Toast.makeText(this, "Zatrzymano", Toast.LENGTH_SHORT).show();
         } else {
-            btnPause.setText("Pauza");
+            btnPause.setText(R.string.pause);
             if (audioRecorder != null) {
-                int ii = audioRecorder.getState();
                 audioRecorder.startRecording();
                 recorderThread = new Thread(new Runnable() {
                     @Override
@@ -217,6 +214,7 @@ public class Recorder extends AppCompatActivity {
         byte data[] = new byte[bufferSize];
         String fileName = getTempFileName();
         FileOutputStream os = null;
+        byte treshold = 127;
         try {
             os = new FileOutputStream(fileName, true);
         } catch (Exception e) {
@@ -227,15 +225,13 @@ public class Recorder extends AppCompatActivity {
             while (isRecording) {
                 read = audioRecorder.read(data, 0, bufferSize);
                 if (AudioRecord.ERROR_INVALID_OPERATION != read) {
-                    int foundPeak = searchThreshold(data, THRESHOLD);
+                    int foundPeak = searchThreshold(data, treshold);
                     if (foundPeak > -1) {
                         try {
                             os.write(data);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    } else {
-
                     }
                 }
             }
@@ -251,11 +247,11 @@ public class Recorder extends AppCompatActivity {
     int searchThreshold(byte[] data, short thr) {
         int peakIndex;
         for (peakIndex = 0; peakIndex < data.length; peakIndex++) {
-            if (Math.abs(data[peakIndex]) >= thr) { //if ((data[peakIndex]>=thr) || (data[peakIndex]<=-thr)){
+            if (Math.abs(data[peakIndex]) >= thr) {
                 return peakIndex;
             }
         }
-        return -1; //not found
+        return -1;
     }
 
     private void copyFile(String src, String dest) {
@@ -272,7 +268,7 @@ public class Recorder extends AppCompatActivity {
             out = new FileOutputStream(dest);
             totalAudioLen = in.getChannel().size();
             totalDataLen = totalAudioLen + 36;
-            header = prepareWaveFileHeader(totalAudioLen, totalDataLen, RECORDER_SAMPLES, 2, byteRate);
+            header = prepareWaveFileHeader(totalAudioLen, totalDataLen, byteRate);
             out.write(header, 0, 44);
             while (in.read(data) != -1) {
                 out.write(data);
@@ -288,8 +284,7 @@ public class Recorder extends AppCompatActivity {
         new File(getTempFileName()).delete();
     }
 
-    private byte[] prepareWaveFileHeader(long totalAudioLen, long totalDataLen,
-                                         long longSampleRate, int channels, long byteRate) {
+    private byte[] prepareWaveFileHeader(long totalAudioLen, long totalDataLen, long byteRate) {
         byte[] header = new byte[44];
         header[0] = 'R';
         header[1] = 'I';
@@ -313,12 +308,12 @@ public class Recorder extends AppCompatActivity {
         header[19] = 0;
         header[20] = 1;
         header[21] = 0;
-        header[22] = (byte) channels;
+        header[22] = (byte) CHANNELS;
         header[23] = 0;
-        header[24] = (byte) (longSampleRate & 0xff);
-        header[25] = (byte) ((longSampleRate >> 8) & 0xff);
-        header[26] = (byte) ((longSampleRate >> 16) & 0xff);
-        header[27] = (byte) ((longSampleRate >> 24) & 0xff);
+        header[24] = (byte) (RECORDER_SAMPLES & 0xff);
+        header[25] = (byte) ((RECORDER_SAMPLES >> 8) & 0xff);
+        header[26] = (byte) ((RECORDER_SAMPLES >> 16) & 0xff);
+        header[27] = (byte) ((RECORDER_SAMPLES >> 24) & 0xff);
         header[28] = (byte) (byteRate & 0xff);
         header[29] = (byte) ((byteRate >> 8) & 0xff);
         header[30] = (byte) ((byteRate >> 16) & 0xff);
@@ -338,7 +333,6 @@ public class Recorder extends AppCompatActivity {
 
         return header;
     }
-
 
     public final void recordingListStart(final View view) {
         finish();

@@ -1,3 +1,30 @@
 <resources>
-    <string name="app_name">AudioRecorderApplication</string>
+    <string name="app_name">Voice Recorder</string>
+    <string name="activity1_start">Rozpocznij nagrywanie</string>
+    <string name="activity2_start">Lista nagrań</string>
+    <string name="main_image_desc">app_icon</string>
+
+    <string name="name">Imię</string>
+    <string name="surname">Nazwisko</string>
+    <string name="title">Tytuł</string>
+    <string name="description">Opis</string>
+    <string name="enter_name">Wprowdź imię</string>
+    <string name="enter_surname">Wprowdź nazwisko</string>
+    <string name="enter_title">Wprowdź tytuł</string>
+    <string name="enter_desc">Wprowdź opis</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="pause">Pauza</string>
+    <string name="delete">Skasuj</string>
+    <string name="go_to_list">Lista</string>
+    <string name="digits"> qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM1234567890ąęóśńóżźĘłŁÓŚĄŻŹŃĆć</string>
+
+    <string name="rec_list">Lista nagrań</string>
+    <string name="combine_rec">Scal nagrania</string>
+
+    <string name="repeat">Wznów</string>
+    <string name="empty">Brak</string>
+    <string name="info">Nie dodałeś jeszcze żadnego nagrania :(</string>
+
+
 </resources>

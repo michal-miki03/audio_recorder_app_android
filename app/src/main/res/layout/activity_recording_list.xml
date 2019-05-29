@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RecordingList"
-    android:background="@drawable/background">>
+    android:background="@drawable/background">
 
     <TextView
         android:id="@+id/title"
@@ -14,19 +14,20 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Lista nagrań"
-        android:textColor="#fff"
+        android:text="@string/rec_list"
         android:textAlignment="center"
+        android:textColor="#fff"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="399dp"
+        android:layout_width="365dp"
+        android:layout_height="491dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -36,15 +37,16 @@
 
     <Button
         android:id="@+id/combineRecords"
+        style="@style/PaddingForButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:onClick="combineRecordings"
-        android:text="Scal nagrania"
-        style="@style/PaddingForButtons"
+        android:text="@string/combine_rec"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/list" />
 

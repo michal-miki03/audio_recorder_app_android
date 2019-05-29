@@ -20,22 +20,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
 public class RecordingList extends AppCompatActivity {
 
-    private ArrayList<String> voicesList = new ArrayList<>();
+    private ArrayList<String> voicesList = new ArrayList<>(10);
     private static final int BITS_PER_SAMPLE = 16;
     private static final String AUDIO_RECORDINGS_FOLDER = "AudioRecordings";
     private static final String AUDIO_RECORDINGS_FILE_EXTENSION_WAV = ".wav";
     private static final int RECORDER_SAMPLES = 44100;
     private static final int CHANNELS = 2;
     private int bufferSize = 0;
-    private MyListAdapter adapter;
     private List<Integer> voicesToCombine = new ArrayList<>();
     private ListView listView;
     Button combine;
@@ -55,7 +53,7 @@ public class RecordingList extends AppCompatActivity {
         makeList(file);
     }
 
-    private File setupTheRecordFolder(){
+    private File setupTheRecordFolder() {
         bufferSize = AudioRecord.getMinBufferSize(
                 8000,
                 AudioFormat.CHANNEL_CONFIGURATION_MONO,
@@ -72,17 +70,17 @@ public class RecordingList extends AppCompatActivity {
     }
 
     public void makeList(File file) {
-
+        MyListAdapter adapter;
         File[] files = file.listFiles();
         voicesList.clear();
         if (files.length != 0) {
             for (File f : files) {
-                String fileName = f.getName().trim();
+                String fileName = f.getName();
                 fileName = fileName.substring(0, fileName.length() - 4);
                 String[] voiceData = fileName.split("-");
                 voicesList.add("Imię: " + voiceData[0] + "\nNazwisko: " + voiceData[1] + "\nTytuł: " + voiceData[2] + "\nOpis: " + voiceData[3]);
             }
-        } else title.setText("Nie dodałeś jeszcze żadnego nagrania :(");
+        } else title.setText(R.string.info);
         adapter = new MyListAdapter(this, R.layout.list_item, voicesList);
         listView.setAdapter(adapter);
     }
@@ -106,7 +104,6 @@ public class RecordingList extends AppCompatActivity {
             String filepath = Environment.getExternalStorageDirectory().getPath();
             File file = new File(filepath, AUDIO_RECORDINGS_FOLDER);
             File[] files = file.listFiles();
-            Collections.sort(voicesToCombine);
 
             String file1Name = files[voicesToCombine.get(0)].getName();
             String file2Name = files[voicesToCombine.get(1)].getName();
@@ -117,8 +114,8 @@ public class RecordingList extends AppCompatActivity {
             file1Name = file1Name.substring(0, file1Name.length() - 4);
             file2Name = file2Name.substring(0, file2Name.length() - 4);
 
-            String[] file1SplitedName = file1Name.trim().split("-");
-            String[] file2SplitedName = file2Name.trim().split("-");
+            String[] file1SplitedName = file1Name.split("-");
+            String[] file2SplitedName = file2Name.split("-");
 
             String fileDestName = file1SplitedName[0] + "," + file2SplitedName[0] + "-" +
                     file1SplitedName[1] + "," + file2SplitedName[1] + "-" +
@@ -151,7 +148,7 @@ public class RecordingList extends AppCompatActivity {
             out = new FileOutputStream(f3);
             totalAudioLen = in1.getChannel().size() + in2.getChannel().size();
             totalDataLen = totalAudioLen + 36;
-            header = prepareWaveFileHeader(totalAudioLen, totalDataLen, RECORDER_SAMPLES, CHANNELS, byteRate);
+            header = prepareWaveFileHeader(totalAudioLen, totalDataLen, byteRate);
             out.write(header, 0, 44);
             while (in1.read(data) != -1) {
                 out.write(data);
@@ -170,8 +167,7 @@ public class RecordingList extends AppCompatActivity {
         }
     }
 
-    private byte[] prepareWaveFileHeader(long totalAudioLen, long totalDataLen,
-                                         long longSampleRate, int channels, long byteRate) {
+    private byte[] prepareWaveFileHeader(long totalAudioLen, long totalDataLen, long byteRate) {
         byte[] header = new byte[44];
         header[0] = 'R';
         header[1] = 'I';
@@ -195,12 +191,12 @@ public class RecordingList extends AppCompatActivity {
         header[19] = 0;
         header[20] = 1;
         header[21] = 0;
-        header[22] = (byte) channels;
+        header[22] = (byte) CHANNELS;
         header[23] = 0;
-        header[24] = (byte) (longSampleRate & 0xff);
-        header[25] = (byte) ((longSampleRate >> 8) & 0xff);
-        header[26] = (byte) ((longSampleRate >> 16) & 0xff);
-        header[27] = (byte) ((longSampleRate >> 24) & 0xff);
+        header[24] = (byte) (RECORDER_SAMPLES & 0xff);
+        header[25] = (byte) ((RECORDER_SAMPLES >> 8) & 0xff);
+        header[26] = (byte) ((RECORDER_SAMPLES >> 16) & 0xff);
+        header[27] = (byte) ((RECORDER_SAMPLES >> 24) & 0xff);
         header[28] = (byte) (byteRate & 0xff);
         header[29] = (byte) ((byteRate >> 8) & 0xff);
         header[30] = (byte) ((byteRate >> 16) & 0xff);
@@ -226,16 +222,16 @@ public class RecordingList extends AppCompatActivity {
         private List<String> voices;
         ViewHolder viewHolder;
 
-        private MyListAdapter(Context context, int recource, List<String> voices) {
-            super(context, recource, voices);
-            layout = recource;
+        private MyListAdapter(Context context, int resource, List<String> voices) {
+            super(context, resource, voices);
             this.voices = voices;
+            layout = resource;
         }
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
 
-            ViewHolder mainViewHolder = null;
+            ViewHolder mainViewHolder;
             if (convertView == null) {
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 convertView = inflater.inflate(layout, parent, false);
@@ -285,6 +281,7 @@ public class RecordingList extends AppCompatActivity {
                                 voicesToCombine.remove((Integer) position);
                             }
                         }
+                        Toast.makeText(getContext(), "Zaznaczyłeś/odznaczyłeś: " + (position + 1), Toast.LENGTH_SHORT).show();
                         checkInfo();
                     }
                 });
